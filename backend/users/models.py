@@ -1,3 +1,42 @@
 from django.db import models
 
-# Create your models here.
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    USER = 'user'
+    ADMIN = 'admin'
+    ROLE_USER = [
+        (USER, 'Пользователь'),
+        (ADMIN, 'Администратор'),
+    ]
+    username = models.CharField(
+        'Логин пользователя', max_length=150, unique=True
+    )
+    email = models.EmailField('Электронная почта', max_length=254, unique=True)
+    first_name = models.CharField(
+        'Имя пользователя', max_length=150
+    )
+    last_name = models.CharField(
+        'Фамилия пользователя', max_length=150
+    )
+    role = models.CharField(
+        max_length=15, choices=ROLE_USER, default=USER,
+        verbose_name='Роль пользователя'
+    )
+    password = models.CharField(
+        max_length=40, verbose_name='Пароль'
+    )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name']
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    @property
+    def admin(self):
+        return self.role == self.ADMIN
+
+    def __str__(self):
+        return self.username
