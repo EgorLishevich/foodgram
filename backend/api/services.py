@@ -2,12 +2,12 @@ from django.db.models import Sum
 from datetime import date
 from django.http import HttpResponse
 
-from recipes.models import IngredientRecipe
+from recipes.models import IngredientInRecipe
 
 
 def shopping_cart(self, request, author):
-    sum_ingredients_in_recipes = IngredientRecipe.objects.filter(
-        recipe__shopping_cart__author=author
+    sum_ingredients_in_recipes = IngredientInRecipe.objects.filter(
+        recipe__shopping_cart__user=author
     ).values(
         'ingredient__name', 'ingredient__measurement_unit'
     ).annotate(

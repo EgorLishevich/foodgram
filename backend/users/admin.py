@@ -1,13 +1,12 @@
-from django.contrib import admin
+from django.contrib.admin import register
+from django.contrib.auth.admin import UserAdmin
+
 from .models import User
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'first_name',
-                    'last_name', 'email', 'role', 'admin')
-    list_filter = ('username', 'email',)
+@register(User)
+class MyUserAdmin(UserAdmin):
+    list_display = ('pk', 'username', 'email', 'first_name', 'last_name',
+                    'password')
+    list_filter = ('username', 'email')
     search_fields = ('username', 'email')
-    empty_value_display = 'Пусто'
-
-
-admin.site.register(User, UserAdmin)

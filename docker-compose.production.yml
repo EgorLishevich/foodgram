@@ -9,25 +9,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
   backend:
-    build: ./backend/
+    image: remaiddd/foodgram_backend:latest
     env_file: .env
     volumes:
       - static_value:/backend_static
       - media_value:/app/media/
-    depends_on:
-      - db
   frontend:
-    build: ./frontend/
     env_file: .env
+    image: remaiddd/foodgram_frontend:latest
     volumes:
       - static_value:/app/result_build/build
   nginx:
-    build: ./infra/
+    image: remaiddd/foodgram_gateaway:latest
     ports:
-      - "80:80"
+      - "8000:80"
+    env_file: .env
     volumes:
       - static_value:/static/
       - media_value:/media/
-    depends_on:
-      - frontend
-      - backend

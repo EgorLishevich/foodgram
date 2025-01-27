@@ -1,42 +1,54 @@
-from django.db import models
-
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
+
+from django.db import models
 
 
 class User(AbstractUser):
-    USER = 'user'
-    ADMIN = 'admin'
-    ROLE_USER = [
-        (USER, 'Пользователь'),
-        (ADMIN, 'Администратор'),
-    ]
-    username = models.CharField(
-        'Логин пользователя', max_length=150, unique=True
+    """Модель для пользователей, созданная для приложения foodgram"""
+    USER_REGEX = r'^[\w.@+-]+$'
+
+    email = models.EmailField(
+        verbose_name='Электронная почта',
+        unique=True
     )
-    email = models.EmailField('Электронная почта', max_length=254, unique=True)
+    username = models.CharField(
+        max_length=150,
+        verbose_name='Имя пользователя',
+        unique=True,
+        db_index=True,
+        validators=[
+            RegexValidator(
+                regex=USER_REGEX,
+                message='Используйте только буквы и символы: w . @ + - ',
+            ),
+        ]
+    )
     first_name = models.CharField(
-        'Имя пользователя', max_length=150
+        max_length=150,
+        verbose_name='Имя'
     )
     last_name = models.CharField(
-        'Фамилия пользователя', max_length=150
+        max_length=150,
+        verbose_name='Фамилия'
     )
-    role = models.CharField(
-        max_length=15, choices=ROLE_USER, default=USER,
-        verbose_name='Роль пользователя'
-    )
-    password = models.CharField(
-        max_length=40, verbose_name='Пароль'
-    )
+    avatar = models.ImageField(
+        upload_to='media/avatar',
+        blank=True,
+        null=True,
+        verbose_name='Аватар')
+
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
 
     class Meta:
+        """Мета-параметры"""
+
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
-    @property
-    def admin(self):
-        return self.role == self.ADMIN
+        ordering = ('id',)
 
     def __str__(self):
+        """Строковое представление"""
+
         return self.username
