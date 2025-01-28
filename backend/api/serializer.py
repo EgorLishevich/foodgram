@@ -18,7 +18,6 @@ class Base64ImageField(serializers.ImageField):
     """Кастомное поле для кодирования изображения в base64."""
 
     def to_internal_value(self, data):
-        """Преобразование картинки."""
         if isinstance(data, str) and data.startswith("data:image"):
             format, imgstr = data.split(";base64,")
             ext = format.split("/")[-1]
@@ -71,7 +70,6 @@ class PasswordSetSerializer(serializers.Serializer):
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
-    """Краткое представления рецептов."""
     image = Base64ImageField()
 
     class Meta:
@@ -162,7 +160,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """Основной сериализатор для рецептов."""
+    """Сериализатор для рецептов."""
 
     cooking_time = serializers.IntegerField(
         max_value=MES_MAX, min_value=MESSAGE

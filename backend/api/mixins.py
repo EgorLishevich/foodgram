@@ -3,7 +3,6 @@ from rest_framework.response import Response
 
 
 class IsSubscribedMixin:
-    """Проверка подписки пользователя на автора."""
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')

@@ -4,7 +4,6 @@ from recipes.models import Ingredient, Recipe, Tag
 
 
 class RecipeFilter(filters.FilterSet):
-    """Фильтрации для рецептов."""
 
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
@@ -41,7 +40,6 @@ class RecipeFilter(filters.FilterSet):
 
 
 class IngredientFilter(filters.FilterSet):
-    """Фильтрация для ингредиентов."""
 
     name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
 

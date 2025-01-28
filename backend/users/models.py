@@ -5,7 +5,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """Модель для пользователей, созданная для приложения foodgram"""
+    """Модель для пользователей"""
     USER_REGEX = r'^[\w.@+-]+$'
 
     email = models.EmailField(
@@ -14,13 +14,13 @@ class User(AbstractUser):
     )
     username = models.CharField(
         max_length=150,
-        verbose_name='Имя пользователя',
+        verbose_name='Логин пользователя',
         unique=True,
         db_index=True,
         validators=[
             RegexValidator(
                 regex=USER_REGEX,
-                message='Используйте только буквы и символы: w . @ + - ',
+                message='Используйте только буквы и символы: @ . w + - ',
             ),
         ]
     )
@@ -42,13 +42,11 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
 
     class Meta:
-        """Мета-параметры"""
 
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('id',)
 
     def __str__(self):
-        """Строковое представление"""
 
         return self.username

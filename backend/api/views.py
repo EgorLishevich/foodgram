@@ -1,9 +1,4 @@
-import csv
-from io import StringIO
-
 from django.contrib.auth import get_user_model
-from django.db.models import Sum
-from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -24,7 +19,6 @@ from api.mixins import RecipeActionMixin
 from recipes.models import (
     Favorite,
     Ingredient,
-    IngredientInRecipe,
     Recipe,
     ShoppingCart,
     Follow,
@@ -183,7 +177,7 @@ class UserAvatarView(APIView):
 
 
 class TagViewSet(ModelViewSet):
-    """Работы с тегами."""
+    """Управление тегами."""
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -242,8 +236,7 @@ class RecipeViewSet(ModelViewSet, RecipeActionMixin):
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         """
-        Скачать список покупок для выбранных рецептов,
-        данные суммируются.
+        Скачать список покупок для выбранных рецептов
         """
         author = User.objects.get(id=self.request.user.pk)
         if author.shopping_cart.exists():

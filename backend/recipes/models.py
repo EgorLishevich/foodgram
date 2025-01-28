@@ -18,11 +18,10 @@ class Tag(models.Model):
     slug = models.SlugField(
         max_length=150,
         unique=True,
-        verbose_name="Уникальный слаг"
+        verbose_name="Cлаг"
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
@@ -35,7 +34,6 @@ class Tag(models.Model):
         )
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return self.name
 
 
@@ -49,18 +47,16 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         max_length=150,
-        verbose_name="Ед. измерения"
+        verbose_name="Единица измерения"
     )
 
     class Meta:
-        """Класс мета."""
 
         ordering = ("name",)
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return f"{self.name}, {self.measurement_unit}"
 
 
@@ -78,7 +74,7 @@ class Recipe(models.Model):
         verbose_name="Название рецепта"
     )
     image = models.ImageField(
-        verbose_name="Фотография рецепта",
+        verbose_name="Фото рецепта",
         upload_to="recipes/",
         blank=True
     )
@@ -101,11 +97,11 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 MESSAGE,
-                message="Минимальное значение 1!"
+                message="Минимальное значение 1"
             ),
             MaxValueValidator(
                 MES_MAX,
-                message="Слишком большое значение!"
+                message="Слишком большое значение"
             )
         ]
     )
@@ -123,32 +119,30 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
         ordering = ("-created",)
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return self.name
 
     def generate_short_code(self):
-        """Генерирует уникальный короткий код."""
+        """Генерирует уникальный код."""
         while True:
             short_code = get_random_string(length=6)
             if not Recipe.objects.filter(short_code=short_code).exists():
                 return short_code
 
     def save(self, *args, **kwargs):
-        """Переопределяем метод save для генерации короткого кода."""
+        """Переопределяем метод save."""
         if not self.short_code:
             self.short_code = self.generate_short_code()
         super().save(*args, **kwargs)
 
 
 class IngredientInRecipe(models.Model):
-    """Кол-во ингредиентов в отдельных рецептах."""
+    """Колличество ингредиентов в отдельных рецептах."""
 
     recipe = models.ForeignKey(
         Recipe,
@@ -167,17 +161,16 @@ class IngredientInRecipe(models.Model):
         validators=[
             MinValueValidator(
                 MESSAGE,
-                message="Минимальное кол-во 1!"
+                message="Минимальное кол-во 1"
             ),
             MaxValueValidator(
                 MES_MAX,
-                message="Слишком большое значение!"
+                message="Слишком большое значение"
             )
         ]
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Ингредиенты в рецепте"
         verbose_name_plural = "Ингредиенты в рецептах"
@@ -189,7 +182,6 @@ class IngredientInRecipe(models.Model):
         ]
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return f"{self.ingredient} {self.recipe}"
 
 
@@ -207,7 +199,6 @@ class TagInRecipe(models.Model):
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Тег рецепта"
         verbose_name_plural = "Теги рецепта"
@@ -217,7 +208,6 @@ class TagInRecipe(models.Model):
         ]
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return f"{self.tag} {self.recipe}"
 
 
@@ -238,7 +228,6 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
@@ -249,7 +238,6 @@ class ShoppingCart(models.Model):
         ]
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return f"{self.user} {self.recipe}"
 
 
@@ -270,7 +258,6 @@ class Follow(models.Model):
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
@@ -281,7 +268,6 @@ class Follow(models.Model):
         ]
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return f"{self.user} {self.author}"
 
 
@@ -302,7 +288,6 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        """Класс мета."""
 
         verbose_name = "Избранное"
         verbose_name_plural = "Избранное"
@@ -313,5 +298,4 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
-        """Метод строкового представления модели."""
         return f"{self.user} {self.recipe}"

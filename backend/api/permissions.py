@@ -5,7 +5,6 @@ User = get_user_model()
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
-    """Разрешения редактирования."""
 
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
