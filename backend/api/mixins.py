@@ -20,7 +20,6 @@ class IsSubscribedMixin:
 
 
 class RecipeActionMixin:
-    """Добавление или удаления рецепта избранного или корзины."""
 
     def check_recipe_action(self, request, model, serializer_class):
         recipe = self.get_object()
