@@ -39,7 +39,7 @@ class User(AbstractUser):
         blank=True,
         verbose_name='Аватар пользователя'
     )
-    USERNAME_FIELD = 'email'
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
