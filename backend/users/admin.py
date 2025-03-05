@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.contrib.admin import register
 from django.contrib.auth.admin import UserAdmin
 
@@ -5,8 +6,18 @@ from .models import User
 
 
 @register(User)
-class MyUserAdmin(UserAdmin):
-    list_display = ('pk', 'username', 'email', 'first_name', 'last_name',
-                    'password')
-    list_filter = ('username', 'email')
+class UsersAdmin(UserAdmin):
+    list_display = (
+        'username', 'first_name', 'last_name', 'email', 'password',
+        'avatar', 'subscribers_count', 'recipes_count', 'pk'
+    )
     search_fields = ('username', 'email')
+    list_filter = ('username', 'email')
+
+    @admin.display(description='Колл-во подписчикоа')
+    def subscribers_count(self, obj):
+        return obj.subscription_author.count()
+
+    @admin.display(description='Колл-во рецептов')
+    def recipes_count(self, obj):
+        return obj.recipes.count()

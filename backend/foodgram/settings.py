@@ -14,6 +14,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from foodgram.consts import DEFAULT_PAGE_SIZE
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,11 +46,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'django_filters',
     'api.apps.ApiConfig',
     'recipes.apps.RecipesConfig',
     'users.apps.UsersConfig',
-    'drf_yasg',
-    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -146,6 +147,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'PAGE_SIZE': 6,
 }
 
 DJOSER = {
