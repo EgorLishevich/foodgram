@@ -9,7 +9,7 @@ class RecipeFilter(FilterSet):
     is_in_shopping_cart = BooleanFilter(
         method='recipe_in_shopping_cart_filter'
     )
-    is_favorite = BooleanFilter(
+    is_favorited = BooleanFilter(
         method='is_favorite_filter'
     )
     tags = ModelMultipleChoiceFilter(
@@ -33,7 +33,7 @@ class RecipeFilter(FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('is_favorite', 'tags', 'is_in_shopping_cart', 'author')
+        fields = ('is_favorited', 'tags', 'is_in_shopping_cart', 'author')
 
 
 class IngridientFilter(FilterSet):

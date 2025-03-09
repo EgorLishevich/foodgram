@@ -1,6 +1,7 @@
+from rest_framework import serializers
+
 from api.serializer import UserProfileSerializer
 from recipes.serializer import ShortRecipeSertializer
-from rest_framework import serializers
 from users.models import Subscription, User
 
 

@@ -1,7 +1,7 @@
-from api.fields import Base64ImageField
-from api.serializer import UserProfileSerializer
 from rest_framework import serializers
 
+from api.fields import Base64ImageField
+from api.serializer import UserProfileSerializer
 from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 
@@ -56,6 +56,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_favorited', 'cooking_time', 'is_in_shopping_cart',
             'tags'
         )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['tags'] = TagSerializer(
+            instance.tags.all(), many=True).data
+
+        return representation
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
@@ -198,19 +205,7 @@ class ShoppingCartSerializer(
     class Meta(UserRecipeSerializer.Meta):
         model = ShoppingCart
 
-    def validate(self, data):
-        action = self.context.get('action')
-        if action == 'shopping_cart':
-            pass
-        return super().validate(data)
-
 
 class FavoriteSerializer(UserRecipeSerializer, serializers.ModelSerializer):
     class Meta(UserRecipeSerializer.Meta):
         model = Favorite
-
-    def validate(self, data):
-        action = self.context.get('action')
-        if action == 'favorites':
-            pass
-        return super().validate(data)

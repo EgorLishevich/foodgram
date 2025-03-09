@@ -1,7 +1,7 @@
-from api.pagination import PagePagination
-from api.permissions import IsAuthorOrReadOnly
+import hashids
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
@@ -11,6 +11,8 @@ from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
                                    HTTP_400_BAD_REQUEST)
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from api.pagination import PagePagination
+from api.permissions import IsAuthorOrReadOnly
 from .filters import IngridientFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
                      ShoppingCart, Tag)
@@ -32,14 +34,6 @@ class RecipeViewSet(ModelViewSet):
             'partial_update': CreateRecipeSerializer,
         }
         return serializer_classes.get(self.action, RecipeSerializer)
-
-    def get_queryset(self):
-        if self.action == 'list' and self.request.query_params.get(
-            'is_favorite'
-        ):
-            user = self.request.user
-            return super().get_queryset().filter(favorites__user=user)
-        return super().get_queryset()
 
     def handle_user_recipe_relation(
             self, request, pk, serialier_class,
@@ -122,9 +116,20 @@ class RecipeViewSet(ModelViewSet):
         url_path='get-link'
     )
     def get_link(self, request, pk):
-        inst = self.get_object()
-        url = f"{request.get_host()}/s/{inst.id}"
-        return Response(data={'short-link': url})
+        recipe = self.get_object()
+        hashid = hashids.Hashids(salt='random_salt', min_length=6)
+        hashid_id = hashid.encode(recipe.id)
+        short_link = f'{request.get_host()}/s/{hashid_id}'
+        return Response({'short-link': short_link})
+
+
+def redirect_to_recipe(request, short_id):
+    hashid = hashids.Hashids(salt='random_salt', min_length=6)
+    decoded_id = hashid.decode(short_id)
+    if decoded_id:
+        recipe_id = decoded_id[0]
+        return redirect(f'/recipes/{recipe_id}/')
+    return HttpResponseNotFound('Рецепт не был найден')
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
