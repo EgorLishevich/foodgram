@@ -12,7 +12,7 @@ class Ingredient(models.Model):
     )
     name = models.CharField(
         verbose_name='Название ингридиента',
-        max_length=40
+        max_length=100
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name='Колличество ингридиентов в рецепте',
