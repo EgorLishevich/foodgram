@@ -1,8 +1,8 @@
-from django_filters.rest_framework import (
-    FilterSet, ModelMultipleChoiceFilter, BooleanFilter, CharFilter
-)
+from django_filters.rest_framework import (BooleanFilter, CharFilter,
+                                           FilterSet,
+                                           ModelMultipleChoiceFilter)
 
-from recipes.models import Recipe, Ingredient, Tag
+from .models import Ingredient, Recipe, Tag
 
 
 class RecipeFilter(FilterSet):
@@ -19,14 +19,14 @@ class RecipeFilter(FilterSet):
         conjoined=False
     )
 
-    def recipe_in_shopping_cart_filter(self, name, queryset, pk):
-        if pk:
+    def recipe_in_shopping_cart_filter(self, queryset, name, value):
+        if value:
             user = self.request.user
-            return queryset.filter(shopping_recipe__user_id=user.id)
+            return queryset.filter(shopping_cart__user_id=user.id)
         return queryset
 
-    def is_favorite_filter(self, name, queryset, pk):
-        if pk:
+    def is_favorite_filter(self, queryset, name, value):
+        if value:
             user = self.request.user
             return queryset.filter(favorites__user_id=user.id)
         return queryset

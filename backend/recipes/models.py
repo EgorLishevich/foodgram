@@ -2,33 +2,31 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from foodgram.consts import (
-    INGREDIENT_MEASUREMENT_UNIT_MAX_LENGTH, RECIPE_NAME_MAX,
-    INGREDIENT_MIN_AMOUNT, INGRIDIENT_NAME_MAX, RECIPE_COOKING_TIME_MIN,
-    RECIPE_IMAGE_UPLOAD_TO
-)
-
 User = get_user_model()
 
 
 class Ingredient(models.Model):
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        max_length=INGREDIENT_MEASUREMENT_UNIT_MAX_LENGTH
+        max_length=100
     )
     name = models.CharField(
         verbose_name='Название ингридиента',
-        max_length=INGRIDIENT_NAME_MAX
+        max_length=40
+    )
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='Колличество ингридиентов в рецепте',
+        null=True
     )
 
     class Meta:
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
-        ordering = ('name',)
+        ordering = ('-name',)
         constraints = [
             models.UniqueConstraint(
                 name='unique_ingredient',
-                fields=['name', 'measurement_unit'],
+                fields=['name', 'measurement_unit', 'amount'],
             )
         ]
 
@@ -51,7 +49,7 @@ class IngridientsInRecipe(models.Model):
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name='Колличество ингридиентов в рецепте',
-        validators=[MinValueValidator(INGREDIENT_MIN_AMOUNT)]
+        validators=[MinValueValidator(1)]
     )
 
     class Meta:
@@ -66,7 +64,7 @@ class IngridientsInRecipe(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.recipe}, {self.ingridient}'
+        return f'{self.recipe} {self.ingredient}'
 
 
 class Tag(models.Model):
@@ -125,7 +123,7 @@ class TagInRecipe(models.Model):
 class Recipe(models.Model):
     name = models.CharField(
         verbose_name='Название рецепта',
-        max_length=RECIPE_NAME_MAX
+        max_length=100
     )
     text = models.CharField(
         verbose_name='Описание рецепта',
@@ -138,7 +136,7 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
-        validators=[MinValueValidator(RECIPE_COOKING_TIME_MIN)]
+        validators=[MinValueValidator(1)]
     )
     tags = models.ManyToManyField(
         Tag,
@@ -147,9 +145,9 @@ class Recipe(models.Model):
     image = models.ImageField(
         verbose_name='Фото рецепта',
         blank=True,
-        upload_to=RECIPE_IMAGE_UPLOAD_TO
+        upload_to='recipes/'
     )
-    ingredient = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингридиенты рецепта',
         through='IngridientsInRecipe'
@@ -157,6 +155,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         verbose_name='Автор рецепта',
+        related_name='authored_recipes',
         on_delete=models.CASCADE
     )
 
@@ -203,8 +202,25 @@ class ShoppingCart(UserRecipe):
         default_related_name = 'shopping_cart'
 
 
-class Favorite(UserRecipe):
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
 
     class Meta:
-        verbose_name = 'Избранное'
-        default_related_name = 'favorite'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favorite'
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} {self.recipe}"

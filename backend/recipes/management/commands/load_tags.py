@@ -1,6 +1,6 @@
 import csv
-from django.core.management.base import BaseCommand
 
+from django.core.management.base import BaseCommand
 from recipes.models import Tag
 
 
@@ -11,8 +11,8 @@ class Command(BaseCommand):
         print('Загрузка тегов для базы данных завершена.')
 
     def import_tags(self, file='tags.csv'):
-        file_path = f'./data/{file}'
-        with open(file_path, newline='', encoding='utf-8') as f:
+        path = f'./data/{file}'
+        with open(path, newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             for row in reader:
                 status, created = Tag.objects.update_or_create(

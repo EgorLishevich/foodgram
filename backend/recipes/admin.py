@@ -1,12 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, register
-
-from recipes.models import (
-    Ingredient, IngridientsInRecipe, Recipe,
-    ShoppingCart, Favorite, Tag
-)
 from users.models import Subscription
-from foodgram.consts import INGREDIENT_INLINE_MIN_AMOUNT
+
+from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
+                     ShoppingCart, Tag)
 
 
 @register(Favorite)
@@ -32,9 +29,9 @@ class IngridientAdmin(ModelAdmin):
     search_fields = ('name',)
 
 
-class IngredientInRecipeAdmin(admin.TabularInline):  # Правильный класс для inlines
+class IngredientInRecipeAdmin(admin.TabularInline):
     model = IngridientsInRecipe
-    min_num = INGREDIENT_INLINE_MIN_AMOUNT
+    min_num = 1
 
 
 @register(Tag)
@@ -49,11 +46,11 @@ class RecipeAdmin(ModelAdmin):
     )
     list_filter = ('author', 'name', 'tags')
     search_fields = ('author__username', 'name')
-    inlines = [IngredientInRecipeAdmin]  # Используем правильный класс
+    inlines = [IngredientInRecipeAdmin]
 
     @admin.display(description='Кол-во рецептов в избранном')
     def get_favorites(self, object):
-        return object.favorites.count()
+        return object.favorite.count()
 
     @admin.display(description='Теги')
     def get_tags(self, object):

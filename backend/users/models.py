@@ -2,48 +2,48 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
-from foodgram.consts import (
-    USER_AVATAR_UPLOAD_TO, USER_EMAIL_MAX, USER_FIRST_NAME_MAX,
-    USER_SECOND_NAME_MAX, USER_USERNAME_MAX, USER_USERNAME_REGEX,
-    USER_PASSWORD_MAX
-)
+USER_USERNAME_REGEX = r'(?!me\b)(^[\w.@+-]+\Z)'
 
 
 class User(AbstractUser):
 
     username = models.CharField(
-        max_length=USER_USERNAME_MAX,
+        max_length=160,
         db_index=True,
         validators=[RegexValidator(regex=USER_USERNAME_REGEX)],
         verbose_name='Юзернейм пользователя',
         unique=True
     )
     first_name = models.CharField(
-        max_length=USER_FIRST_NAME_MAX,
+        max_length=160,
         verbose_name='Имя пользователя'
     )
     last_name = models.CharField(
-        max_length=USER_SECOND_NAME_MAX,
+        max_length=160,
         verbose_name='Фамилия пользователя'
     )
     email = models.EmailField(
-        max_length=USER_EMAIL_MAX,
-        verbose_name='Электронная почта пользователя'
+        max_length=160,
+        verbose_name='Электронная почта пользователя',
+        unique=True
     )
     password = models.CharField(
-        max_length=USER_PASSWORD_MAX,
+        max_length=160,
         verbose_name='Пароль пользователя'
     )
     avatar = models.ImageField(
-        upload_to=USER_AVATAR_UPLOAD_TO,
+        upload_to='users/',
         blank=True,
         verbose_name='Аватар пользователя'
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('username',),
+        ordering = ('username'),
 
     def __str__(self):
         return self.username
