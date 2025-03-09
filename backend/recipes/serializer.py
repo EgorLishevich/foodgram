@@ -1,6 +1,6 @@
 from api.fields import Base64ImageField
+from api.serializer import UserProfileSerializer
 from rest_framework import serializers
-from users.serializers import UserProfileSerializer
 
 from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
                      ShoppingCart, Tag)
