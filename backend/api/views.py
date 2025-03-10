@@ -13,11 +13,11 @@ from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
                                    HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST)
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from api.pagination import PagePagination
-from api.permissions import IsAuthorOrReadOnly
 from recipes.models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                             ShoppingCart, Tag)
 from users.models import Subscription, User
+from .pagination import PagePagination
+from .permissions import IsAuthorOrReadOnly
 from .filters import IngredientFilter, RecipeFilter
 from .serializer import (CreateRecipeSerializer, CreateSubscriptionSerializer,
                          FavoriteSerializer, RecipeSerializer,
