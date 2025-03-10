@@ -24,7 +24,7 @@ class SubscribtionAdmin(ModelAdmin):
 
 
 @register(Ingredient)
-class IngridientAdmin(ModelAdmin):
+class IngredientAdmin(ModelAdmin):
     list_display = ('pk', 'name', 'measurement_unit')
     search_fields = ('name',)
 

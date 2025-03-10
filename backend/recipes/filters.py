@@ -36,7 +36,7 @@ class RecipeFilter(FilterSet):
         fields = ('is_favorited', 'tags', 'is_in_shopping_cart', 'author')
 
 
-class IngridientFilter(FilterSet):
+class IngredientFilter(FilterSet):
     name = CharFilter(
         lookup_expr='istartswith'
     )

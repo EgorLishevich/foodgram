@@ -13,7 +13,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.pagination import PagePagination
 from api.permissions import IsAuthorOrReadOnly
-from .filters import IngridientFilter, RecipeFilter
+from .filters import IngredientFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 from .serializer import (CreateRecipeSerializer, FavoriteSerializer,
@@ -137,7 +137,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     serializer_class = ShortIngredientsSerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = IngridientFilter
+    filterset_class = IngredientFilter
     search_fields = ('^name',)
 
 

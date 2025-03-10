@@ -58,7 +58,7 @@ class IngredientsInRecipe(models.Model):
         ordering = ('recipe__name',)
         constraints = [
             models.UniqueConstraint(
-                name='unique_ingridient_in_recipe',
+                name='unique_ingredient_in_recipe',
                 fields=['recipe', 'ingredient'],
             )
         ]
