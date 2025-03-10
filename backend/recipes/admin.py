@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import ModelAdmin, register
 
 from users.models import Subscription
-from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 
 
@@ -30,7 +30,7 @@ class IngridientAdmin(ModelAdmin):
 
 
 class IngredientInRecipeAdmin(admin.TabularInline):
-    model = IngridientsInRecipe
+    model = IngredientsInRecipe
     min_num = 1
 
 

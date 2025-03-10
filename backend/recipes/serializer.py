@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from api.fields import Base64ImageField
 from api.serializer import UserProfileSerializer
-from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 
 
@@ -167,7 +167,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags',)
-        IngridientsInRecipe.objects.filter(recipe=instance).delete()
+        IngredientsInRecipe.objects.filter(recipe=instance).delete()
         self.create_ingredients(instance, validated_data.pop('ingredients'))
 
         if tags_data is not None:
@@ -180,13 +180,13 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for ingredient_data in ingredients:
             ingredient = Ingredient.objects.get(id=ingredient_data['id'])
             ingredient_instances.append(
-                IngridientsInRecipe(
+                IngredientsInRecipe(
                     recipe=recipe,
                     ingredient=ingredient,
                     amount=ingredient_data['amount']
                 )
             )
-        IngridientsInRecipe.objects.bulk_create(ingredient_instances)
+        IngredientsInRecipe.objects.bulk_create(ingredient_instances)
 
 
 class UserRecipeSerializer:

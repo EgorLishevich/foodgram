@@ -14,7 +14,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api.pagination import PagePagination
 from api.permissions import IsAuthorOrReadOnly
 from .filters import IngridientFilter, RecipeFilter
-from .models import (Favorite, Ingredient, IngridientsInRecipe, Recipe,
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 from .serializer import (CreateRecipeSerializer, FavoriteSerializer,
                          RecipeSerializer, ShoppingCartSerializer,
@@ -92,7 +92,7 @@ class RecipeViewSet(ModelViewSet):
     )
     def download_shopping_cart(self, request):
         ingr = (
-            IngridientsInRecipe.objects.filter(
+            IngredientsInRecipe.objects.filter(
                 recipe__shopping_cart__user=request.user
             ).values(
                 'ingredient__name', 'ingredient__measurement_unit'

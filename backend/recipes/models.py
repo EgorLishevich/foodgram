@@ -34,11 +34,11 @@ class Ingredient(models.Model):
         return f'{self.measurement_unit}, {self.name}'
 
 
-class IngridientsInRecipe(models.Model):
+class IngredientsInRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         verbose_name='Ингридиент',
-        related_name='ingridients_in_recipe',
+        related_name='ingredients_in_recipe',
         on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
@@ -150,7 +150,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингридиенты рецепта',
-        through='IngridientsInRecipe'
+        through='IngredientsInRecipe'
     )
     author = models.ForeignKey(
         User,
