@@ -15,7 +15,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from recipes.models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                             ShoppingCart, Tag)
-from users.models import Subscription, User
+from users.models import User
 from .pagination import PagePagination
 from .permissions import IsAuthorOrReadOnly
 from .filters import IngredientFilter, RecipeFilter
@@ -94,11 +94,8 @@ class UserProfileViewSet(UserViewSet):
         return self.delete_subscription(request, id)
 
     def delete_subscription(self, request, id):
-        subs = Subscription.objects.filter(
-            subscriber=request.user.id, author=id
-        )
-
         author = User.objects.get(pk=id)
+        subs = request.user.subscription_subscriber.filter(author=author)
         if not subs.exists():
             return Response(
                 f'Вы не подписаны на {author}',

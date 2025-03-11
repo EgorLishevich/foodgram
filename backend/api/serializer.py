@@ -1,10 +1,14 @@
 from djoser.serializers import UserCreateSerializer
+from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
 from api.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                             ShoppingCart, Tag)
 from users.models import Subscription, User
+
+MAX_VALUE = 32000
+MIN_VALUE = 1
 
 
 class UserProfileSerializer(UserCreateSerializer):
@@ -20,7 +24,7 @@ class UserProfileSerializer(UserCreateSerializer):
         )
 
     def get_is_subscribed(self, data):
-        user = self.context.get('request').user
+        user = self.context['request'].user
 
         return (
             user.is_authenticated and user.subscription_subscriber.filter(
@@ -131,7 +135,7 @@ class SubscriptionSerializer(UserProfileSerializer):
         return obj.authored_recipes.count()
 
     def get_recipes(self, obj):
-        request = self.context.get('request')
+        request = self.context['request']
         recipes = obj.authored_recipes.all()
         recipes_limit = request.query_params.get('recipes_limit')
         if recipes_limit:
@@ -173,7 +177,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return representation
 
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
+        request = self.context['request']
         if request and request.user.is_authenticated:
             return request.user.shopping_cart.filter(recipe=obj).exists()
         return False
@@ -187,18 +191,15 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class CreateShortIngredientsSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(
+        validators=[
+            MinValueValidator(MIN_VALUE), MaxValueValidator(MAX_VALUE)
+        ]
+    )
 
     class Meta:
         model = Ingredient
         fields = ('id', 'amount')
-
-    def validate_amount(self, value):
-        if value < 1:
-            raise serializers.ValidationError(
-                'Количество ингредиента должно быть больше 0'
-            )
-        return value
 
     def validate_id(self, value):
         try:
@@ -224,6 +225,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
+    cooking_time = serializers.IntegerField(
+        validators=[
+            MinValueValidator(MIN_VALUE), MaxValueValidator(MAX_VALUE)
+        ]
+    )
 
     class Meta:
         model = Recipe
@@ -236,6 +242,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError('Ингредиенты обязательны')
         ingredients = []
+        ingredient_ids = set()
         for ingredient_data in value:
             ingredient_id = ingredient_data.get('id')
             amount = ingredient_data.get('amount')
@@ -243,10 +250,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     'Укажите ID и количество ингредиента'
                 )
-            if amount <= 0:
-                raise serializers.ValidationError(
-                    'Количество ингредиента должно быть больше 0'
-                )
+            ingredient_ids.add(ingredient_id)
             ingredients.append({'id': ingredient_id, 'amount': amount})
         return ingredients
 
@@ -265,7 +269,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return tags
 
     def create(self, validated_data):
-        user = self.context.get('request').user
+        user = self.context['request'].user
         ingredients_data = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')
         recipe = Recipe.objects.create(author=user, **validated_data)
