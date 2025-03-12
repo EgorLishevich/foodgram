@@ -8,7 +8,7 @@ from .models import User
 @register(User)
 class UsersAdmin(UserAdmin):
     list_display = (
-        'username', 'first_name', 'last_name', 'email', 'avatar', 
+        'username', 'first_name', 'last_name', 'email', 'avatar',
         'subscribers_count', 'recipes_count', 'pk'
     )
     search_fields = ('username', 'email')
