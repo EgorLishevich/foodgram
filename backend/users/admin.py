@@ -8,8 +8,8 @@ from .models import User
 @register(User)
 class UsersAdmin(UserAdmin):
     list_display = (
-        'username', 'first_name', 'last_name', 'email', 'password',
-        'avatar', 'subscribers_count', 'recipes_count', 'pk'
+        'username', 'first_name', 'last_name', 'email', 'avatar', 
+        'subscribers_count', 'recipes_count', 'pk'
     )
     search_fields = ('username', 'email')
     list_filter = ('username', 'email')
@@ -20,4 +20,4 @@ class UsersAdmin(UserAdmin):
 
     @admin.display(description='Колл-во рецептов')
     def recipes_count(self, obj):
-        return obj.recipes.count()
+        return obj.authored_recipes.count()

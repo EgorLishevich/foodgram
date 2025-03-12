@@ -50,7 +50,7 @@ class RecipeAdmin(ModelAdmin):
 
     @admin.display(description='Кол-во рецептов в избранном')
     def get_favorites(self, object):
-        return object.favorite.count()
+        return object.favorites.count()
 
     @admin.display(description='Теги')
     def get_tags(self, object):
